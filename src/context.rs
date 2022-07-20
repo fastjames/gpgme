@@ -50,7 +50,13 @@ impl Context {
         unsafe {
             let mut ctx = ptr::null_mut();
             eprintln!("rust Context::new: after ctx null_mut");
-            return_err!(ffi::gpgme_new(&mut ctx));
+            // return_err!(ffi::gpgme_new(&mut ctx));
+            let mut res = ffi::gpgme_new(&mut ctx);
+            eprintln!("rust Context::new: before match");
+            match gpg_error::Error::new(ffi::gpgme_new(&mut ctx)) {
+                gpg_error::Error::NO_ERROR => (eprintln!("no error found")),
+                err => return Err(From::from(err))
+            }
             eprintln!("rust Context::new: after ffi::gpgme_new");
             Ok(Context::from_raw(ctx))
         }
