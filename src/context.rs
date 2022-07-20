@@ -44,10 +44,14 @@ impl Context {
     impl_wrapper!(ffi::gpgme_ctx_t);
 
     fn new() -> Result<Self> {
+        eprintln!("rust Context::new: start");
         crate::init();
+        eprintln!("rust Context::new: after init");
         unsafe {
             let mut ctx = ptr::null_mut();
+            eprintln!("rust Context::new: after ctx null_mut");
             return_err!(ffi::gpgme_new(&mut ctx));
+            eprintln!("rust Context::new: after ffi::gpgme_new");
             Ok(Context::from_raw(ctx))
         }
     }
@@ -60,10 +64,13 @@ impl Context {
     /// [`gpgme_set_protocol`]: https://www.gnupg.org/documentation/manuals/gpgme/Protocol-Selection.html#index-gpgme_005fset_005fprotocol
     #[inline]
     pub fn from_protocol(proto: Protocol) -> Result<Self> {
+        eprintln!("rust from_protocol: start");
         let ctx = Context::new()?;
+        eprintln!("rust from_protocol: after new context");
         unsafe {
             return_err!(ffi::gpgme_set_protocol(ctx.as_raw(), proto.raw()));
         }
+        eprintln!("rust from_protocol: after unsafe set_protocl");
         Ok(ctx)
     }
 
